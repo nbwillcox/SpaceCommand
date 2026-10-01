@@ -111,10 +111,11 @@
     if (b.state === 'done') return;
     const x = b.x, y = b.y, t = b.t;
     ctx.save(); ctx.translate(x, y);
-    ctx.shadowColor = 'rgba(255,140,60,0.95)'; ctx.shadowBlur = 16;
     ctx.fillStyle = GFX.lg(ctx, 0, -48, 0, 56, [[0, '#4a5878'], [0.5, '#232c46'], [1, '#0c1226']]);
     ctx.beginPath(); ctx.moveTo(-170, 6); ctx.quadraticCurveTo(-150, -36, -70, -44); ctx.lineTo(70, -44); ctx.quadraticCurveTo(150, -36, 170, 6); ctx.quadraticCurveTo(110, 58, 0, 62); ctx.quadraticCurveTo(-110, 58, -170, 6); ctx.fill();
-    ctx.shadowBlur = 0; ctx.strokeStyle = '#ff8a3d'; ctx.lineWidth = 2.6; ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,140,60,0.14)'; ctx.lineWidth = 14; ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,140,60,0.22)'; ctx.lineWidth = 7; ctx.stroke();
+    ctx.strokeStyle = '#ff8a3d'; ctx.lineWidth = 2.6; ctx.stroke();
     ctx.strokeStyle = 'rgba(255,200,140,0.35)'; ctx.lineWidth = 1.2;
     for (let i = -4; i <= 4; i++) { ctx.beginPath(); ctx.moveTo(i * 34, -42); ctx.lineTo(i * 30, 52); ctx.stroke(); }
     ctx.fillStyle = 'rgba(255,200,120,0.7)';

@@ -207,9 +207,9 @@
     }
     ctx.save(); ctx.translate(x, y);
     ctx.globalCompositeOperation = 'lighter'; G.gfx.drawGlow(ctx, 'hsla(0,100%,60%,1)', 0, 4, 40, 0.5); ctx.globalCompositeOperation = 'source-over';
-    ctx.shadowColor = 'rgba(255,60,60,0.9)'; ctx.shadowBlur = 10;
     ctx.fillStyle = G.gfx.lg(ctx, 0, -4, 0, 12, [[0, '#ff9a9a'], [0.5, '#c02a2a'], [1, '#4a0a12']]);
-    ctx.beginPath(); ctx.ellipse(0, 4, 26, 9, 0, 0, TAU); ctx.fill(); ctx.shadowBlur = 0;
+    ctx.beginPath(); ctx.ellipse(0, 4, 26, 9, 0, 0, TAU); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,60,60,0.3)'; ctx.lineWidth = 6; ctx.stroke();
     ctx.strokeStyle = '#ffd0d0'; ctx.lineWidth = 1.3; ctx.stroke();
     ctx.fillStyle = 'rgba(200,255,255,0.85)'; ctx.beginPath(); ctx.moveTo(-12, 0); ctx.quadraticCurveTo(-11, -14, 0, -14); ctx.quadraticCurveTo(11, -14, 12, 0); ctx.closePath(); ctx.fill();
     ctx.fillStyle = '#ff4a4a'; ctx.beginPath(); ctx.ellipse(0, -5, 3, 4, 0, 0, TAU); ctx.fill();
@@ -221,10 +221,10 @@
   function drawBomber(ctx, g, o) {
     ctx.save(); ctx.translate(o.x, o.y); ctx.scale(o.dir, 1);
     ctx.globalCompositeOperation = 'lighter'; G.gfx.drawGlow(ctx, 'hsla(20,100%,60%,1)', -22, 0, 18, 0.7); ctx.globalCompositeOperation = 'source-over';
-    ctx.shadowColor = 'rgba(255,120,60,0.9)'; ctx.shadowBlur = 9;
     ctx.fillStyle = G.gfx.lg(ctx, 0, -18, 0, 18, [[0, '#6a7a9a'], [0.5, '#2a3350'], [1, '#6a7a9a']]);
     ctx.beginPath(); ctx.moveTo(24, 0); ctx.lineTo(-4, -4); ctx.lineTo(-16, -19); ctx.lineTo(-21, -19); ctx.lineTo(-15, 0); ctx.lineTo(-21, 19); ctx.lineTo(-16, 19); ctx.lineTo(-4, 4); ctx.closePath(); ctx.fill();
-    ctx.shadowBlur = 0; ctx.strokeStyle = '#ffb27a'; ctx.lineWidth = 1.6; ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,120,60,0.3)'; ctx.lineWidth = 6; ctx.stroke();
+    ctx.strokeStyle = '#ffb27a'; ctx.lineWidth = 1.6; ctx.stroke();
     ctx.fillStyle = '#7dffd8'; ctx.beginPath(); ctx.ellipse(8, 0, 6, 2.4, 0, 0, TAU); ctx.fill();
     if (o.flash > 0) { ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.fill(); }
     ctx.restore();

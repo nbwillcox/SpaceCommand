@@ -6,12 +6,30 @@
   const HUD = {};
   const FONT = '"Segoe UI", system-ui, -apple-system, Roboto, sans-serif';
 
+  const GS = 2, gcache = new Map();
+  function glowText(ctx, s, x, y, size, color, align, weight, glow) {
+    const key = s + '|' + size + '|' + color + '|' + weight + '|' + glow;
+    let e = gcache.get(key);
+    if (!e) {
+      if (gcache.size > 120) gcache.clear();
+      const f = weight + ' ' + (size * GS) + 'px ' + FONT, c = document.createElement('canvas'), cx = c.getContext('2d');
+      cx.font = f;
+      const tw = cx.measureText(s).width, pad = 16 * GS;
+      c.width = Math.ceil(tw + pad * 2); c.height = Math.ceil(size * GS * 1.5 + pad * 2);
+      cx.font = f; cx.textAlign = 'left'; cx.textBaseline = 'alphabetic';
+      cx.shadowColor = glow; cx.shadowBlur = 10 * GS; cx.fillStyle = color; cx.fillText(s, pad, pad + size * GS);
+      e = { c, tw: tw / GS, pad: pad / GS, by: pad / GS + size };
+      gcache.set(key, e);
+    }
+    const ox = align === 'center' ? -e.tw / 2 : align === 'right' ? -e.tw : 0;
+    ctx.drawImage(e.c, x + ox - e.pad, y - e.by, e.c.width / GS, e.c.height / GS);
+  }
   function txt(ctx, s, x, y, size, color, align, weight, glow) {
-    ctx.font = (weight || 800) + ' ' + size + 'px ' + FONT;
+    weight = weight || 800;
+    if (glow) { glowText(ctx, s, x, y, size, color, align, weight, glow); return; }
+    ctx.font = weight + ' ' + size + 'px ' + FONT;
     ctx.textAlign = align || 'left'; ctx.textBaseline = 'alphabetic';
-    if (glow) { ctx.shadowColor = glow; ctx.shadowBlur = 10; }
     ctx.fillStyle = color; ctx.fillText(s, x, y);
-    ctx.shadowBlur = 0;
   }
   HUD.txt = txt;
 
@@ -61,7 +79,9 @@
     const canFire = g.weapon === 'laser' ? !g.laserLock : !!G.weapons.nearestLauncher(g, x);
     const col = canFire ? '#bff0ff' : '#ff5a5a', p = 1 + Math.sin(g.time * 7) * 0.05;
     ctx.save();
-    ctx.shadowColor = canFire ? '#4ad8ff' : '#ff2a2a'; ctx.shadowBlur = 12; ctx.strokeStyle = col; ctx.lineWidth = 2;
+    ctx.strokeStyle = canFire ? 'rgba(74,216,255,0.28)' : 'rgba(255,42,42,0.28)'; ctx.lineWidth = 7;
+    ctx.beginPath(); ctx.arc(x, y, 13 * p, 0, TAU); ctx.stroke();
+    ctx.strokeStyle = col; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.arc(x, y, 13 * p, 0, TAU); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(x - 24, y); ctx.lineTo(x - 7, y); ctx.moveTo(x + 7, y); ctx.lineTo(x + 24, y); ctx.moveTo(x, y - 24); ctx.lineTo(x, y - 7); ctx.moveTo(x, y + 7); ctx.lineTo(x, y + 24); ctx.stroke();
     ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, y, 2, 0, TAU); ctx.fill();
@@ -95,7 +115,7 @@
     ctx.restore();
   };
 
-  HUD.sides = function (ctx, v) {
+  const paintSides = function (ctx, v, g) {
     const sw = v.ox;
     if (sw < 150) return;
     const sc = Math.min(1.15, sw / 240), cx1 = sw / 2, cx2 = v.ox + W * v.s + sw / 2, top = v.oy + 70 * sc;
@@ -110,6 +130,25 @@
     txt(ctx, 'github.com/nbwillcox', cx2, top + 248 * sc, 12 * sc, col, 'center', 700);
     txt(ctx, '/SpaceCommand', cx2, top + 264 * sc, 12 * sc, col, 'center', 700);
     ctx.restore();
+  };
+
+  let sideCache = null, sideKey = '';
+  HUD.sides = function (ctx, v, g) {
+    if (v.ox < 150) return;
+    const key = [v.w, v.h, v.rs.toFixed(2), Math.round(v.ox), Math.round(v.oy), v.s.toFixed(3), G.scores.list.slice(0, 7).map((r) => r.name + r.score).join(',')].join('|');
+    if (key !== sideKey || !sideCache) {
+      sideKey = key;
+      const pw = Math.round(v.ox * v.rs), ph = Math.round(v.h * v.rs);
+      const full = document.createElement('canvas');
+      full.width = Math.round(v.w * v.rs); full.height = ph;
+      const x = full.getContext('2d');
+      x.scale(v.rs, v.rs);
+      paintSides(x, v, g);
+      const strip = (sx) => { const c = document.createElement('canvas'); c.width = pw; c.height = ph; c.getContext('2d').drawImage(full, sx, 0, pw, ph, 0, 0, pw, ph); return c; };
+      sideCache = { l: strip(0), r: strip(full.width - pw) };
+    }
+    ctx.drawImage(sideCache.l, 0, 0, v.ox, v.h);
+    ctx.drawImage(sideCache.r, v.w - v.ox, 0, v.ox, v.h);
   };
 
   G.hud = HUD;

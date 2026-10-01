@@ -252,9 +252,9 @@
     ctx.fillStyle = GFX.lg(ctx, 0, -4, 0, 4, [[0, '#9fb2d8'], [1, '#2a3552']]); ctx.fillRect(-(l.recoil > 0 ? 4 : 0), -3.5, 30, 7);
     ctx.strokeStyle = '#7fe8ff'; ctx.lineWidth = 1.4; ctx.strokeRect(-(l.recoil > 0 ? 4 : 0), -3.5, 30, 7);
     ctx.restore();
-    ctx.shadowColor = 'rgba(80,200,255,0.9)'; ctx.shadowBlur = 8;
     ctx.fillStyle = GFX.rg(ctx, x - 6, y - 24, 2, 28, [[0, '#cfe9ff'], [0.5, '#3a4f7a'], [1, '#101a3a']]);
-    ctx.beginPath(); ctx.arc(x, y - 4, 24, Math.PI, 0); ctx.closePath(); ctx.fill(); ctx.shadowBlur = 0;
+    ctx.beginPath(); ctx.arc(x, y - 4, 24, Math.PI, 0); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = 'rgba(80,200,255,0.28)'; ctx.lineWidth = 6; ctx.stroke();
     ctx.strokeStyle = '#7fe8ff'; ctx.lineWidth = 1.6; ctx.stroke();
     if (this.st.autoEvery) { ctx.fillStyle = '#7dffb8'; ctx.beginPath(); ctx.arc(x - 12, y - 6, 2.2, 0, TAU); ctx.fill(); }
     if (l.flash > 0) { ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.beginPath(); ctx.arc(x, y - 4, 24, Math.PI, 0); ctx.fill(); }
