@@ -219,6 +219,17 @@
     }
   }
 
+  /* the glowing building outline is blurred once per size into a small canvas (2x for crispness) instead of a shadowBlur stroke per building per frame */
+  const outlines = {};
+  function glowOutline(w, h) {
+    const k = w + 'x' + h; let o = outlines[k];
+    if (!o) {
+      const pad = 10, c = document.createElement('canvas'), x = c.getContext('2d'); c.width = Math.ceil((w + pad * 2) * 2); c.height = Math.ceil((h + pad * 2) * 2);
+      x.scale(2, 2); x.shadowColor = 'rgba(80,220,255,0.9)'; x.shadowBlur = 6 * 2; x.strokeStyle = '#7fe8ff'; x.lineWidth = 1.5; x.strokeRect(pad, pad, w, h);
+      o = outlines[k] = { c, pad, w: c.width / 2, h: c.height / 2 };
+    }
+    return o;
+  }
   function drawCity(ctx, s, t) {
     if (!s.alive) { drawWreck(ctx, s, t); return; }
     const x = s.x, y = C.GROUND;
@@ -227,7 +238,7 @@
     blds.forEach((b, bi) => {
       const bx = x + b[0], by = y - b[2];
       ctx.fillStyle = 'rgba(8,18,44,0.92)'; ctx.fillRect(bx, by, b[1], b[2]);
-      ctx.shadowColor = 'rgba(80,220,255,0.9)'; ctx.shadowBlur = 6; ctx.strokeStyle = '#7fe8ff'; ctx.lineWidth = 1.5; ctx.strokeRect(bx, by, b[1], b[2]); ctx.shadowBlur = 0;
+      const ol = glowOutline(b[1], b[2]); ctx.drawImage(ol.c, bx - ol.pad, by - ol.pad, ol.w, ol.h);
       for (let wy = by + 5; wy < y - 4; wy += 7) for (let wx = bx + 3; wx < bx + b[1] - 3; wx += 5) {
         const on = Math.sin(wx * 12.9 + wy * 7.3 + bi) > -0.2 && Math.sin(t * 0.7 + wx + wy * 3) > -0.92;
         if (on) { ctx.fillStyle = 'rgba(190,245,255,0.85)'; ctx.fillRect(wx, wy, 2.2, 3); }
